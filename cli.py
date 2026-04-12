@@ -36,11 +36,6 @@ def print_summary(start_time, file_count, findings_count, json_path=None):
 
 
 def collect_python_files(path):
-    """
-    Собирает список .py файлов:
-    - если передан файл → вернёт его
-    - если папка → рекурсивно найдёт все .py
-    """
     python_files = []
 
     if os.path.isfile(path):
@@ -58,9 +53,7 @@ def collect_python_files(path):
 
 def main():
     parser = argparse.ArgumentParser(description="Python SAST Scanner")
-
     parser.add_argument("path", help="File OR directory to scan")
-
     parser.add_argument(
         "--json",
         help="Save report to JSON file",
@@ -74,14 +67,8 @@ def main():
         return
 
     start_time = time.time()
-
-    # загрузка правил
     rules = load_rules("rules/rules.json")
-
-    # создание анализатора
     analyzer = Analyzer(rules)
-
-    # собираем файлы
     python_files = collect_python_files(args.path)
 
     if not python_files:
@@ -91,7 +78,7 @@ def main():
     findings = []
     scanned_files = 0
 
-    # анализируем каждый файл
+
     for file_path in python_files:
         tree = parse_file(file_path)
 
@@ -100,7 +87,6 @@ def main():
 
         file_findings = analyzer.analyze(tree)
 
-        # добавляем имя файла в finding
         for f in file_findings:
             if isinstance(f, dict):
                 f["file"] = file_path
@@ -109,17 +95,14 @@ def main():
 
         findings.extend(file_findings)
         scanned_files += 1
-
-    # вывод результатов
+    
     if not args.json:
         for f in findings:
             print(f)
 
-    # сохранение JSON
     if args.json:
         save_json(findings, args.json)
 
-    # итоговая статистика
     print_summary(
         start_time=start_time,
         file_count=scanned_files,
