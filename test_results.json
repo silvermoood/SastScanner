@@ -1,0 +1,66 @@
+[
+    {
+        "rule_id": "CRYPTO001",
+        "cwe": "CWE-327",
+        "lineno": 20,
+        "severity": "HIGH",
+        "message": "Weak cryptographic hash function detected",
+        "file": "..\\benchmark\\tests\\cwe_327.py"
+    },
+    {
+        "rule_id": "CRYPTO001",
+        "cwe": "CWE-327",
+        "lineno": 24,
+        "severity": "HIGH",
+        "message": "Weak cryptographic hash function detected",
+        "file": "..\\benchmark\\tests\\cwe_327.py"
+    },
+    {
+        "rule_id": "CRYPTO001",
+        "cwe": "CWE-327",
+        "lineno": 37,
+        "severity": "HIGH",
+        "message": "Weak cryptographic hash function detected",
+        "file": "..\\benchmark\\tests\\cwe_327.py"
+    },
+    {
+        "rule_id": "CRYPTO001",
+        "cwe": "CWE-327",
+        "lineno": 41,
+        "severity": "HIGH",
+        "message": "Weak cryptographic hash function detected",
+        "file": "..\\benchmark\\tests\\cwe_327.py"
+    },
+    {
+        "rule_id": "CRYPTO001",
+        "cwe": "CWE-327",
+        "lineno": 19,
+        "severity": "HIGH",
+        "message": "Weak cryptographic hash function detected",
+        "file": "..\\benchmark\\tests\\cwe_328.py"
+    },
+    {
+        "rule_id": "CRYPTO001",
+        "cwe": "CWE-327",
+        "lineno": 23,
+        "severity": "HIGH",
+        "message": "Weak cryptographic hash function detected",
+        "file": "..\\benchmark\\tests\\cwe_328.py"
+    },
+    {
+        "rule_id": "CRYPTO001",
+        "cwe": "CWE-327",
+        "lineno": 27,
+        "severity": "HIGH",
+        "message": "Weak cryptographic hash function detected",
+        "file": "..\\benchmark\\tests\\cwe_328.py"
+    },
+    {
+        "rule_id": "CRYPTO001",
+        "cwe": "CWE-327",
+        "lineno": 31,
+        "severity": "HIGH",
+        "message": "Weak cryptographic hash function detected",
+        "file": "..\\benchmark\\tests\\cwe_328.py"
+    }
+]
