@@ -10,8 +10,6 @@ def parse_file(path: str):
 
     except SyntaxError as e:
 
-        # Фикс частой ошибки OWASP Benchmark:
-        # вложенные кавычки в f-string
         fixed = source.replace("decode('utf-8')", 'decode("utf-8")')
 
         try:
