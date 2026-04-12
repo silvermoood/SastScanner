@@ -5,7 +5,6 @@ class SeverityEngine:
     def calculate(self, rule, node, symbols):
         severity = rule.severity_policy.get("base", "MEDIUM")
 
-        # Если есть аргументы — собираем все идентификаторы внутри первого аргумента
         if getattr(node, "args", None):
             arg = node.args[0]
             names = self._collect_names(arg)
