@@ -17,18 +17,3 @@ The primary goal of this project is to assist developers in detecting weaknesses
 * Extensible architecture for adding new rules and checks
 
 ---
-
-## Project Structure
-
-```
-sast-scanner/
-│
-├── src/            # Core application logic
-├── tests/          # Unit and integration tests
-├── docs/           # Documentation
-├── config/         # Configuration files
-└── README.md
-```
-
----
-
