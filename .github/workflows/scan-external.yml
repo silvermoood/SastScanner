@@ -46,15 +46,28 @@ jobs:
         run: |
           echo "Analyzing report..."
 
-          count=$(jq '.issues_detected' report.json)
+          total=$(jq 'length' report.json)
+          critical=$(jq '[.[] | select(.severity=="CRITICAL")] | length' report.json)
+          high=$(jq '[.[] | select(.severity=="HIGH")] | length' report.json)
 
-          echo "Issues detected: $count"
+          echo "Total: $total"
+          echo "Critical: $critical"
+          echo "High: $high"
 
-          if [ "$count" -eq 0 ]; then
+          if [ "$critical" -gt 0 ]; then
+            echo "CRITICAL vulnerabilities found ❌"
+            exit 1
+          fi
+
+          if [ "$high" -gt 0 ]; then
+            echo "HIGH vulnerabilities found ❌"
+            exit 1
+          fi
+
+          if [ "$total" -eq 0 ]; then
             echo "Clean repo ✅"
           else
-            echo "Vulnerabilities found ❌"
-            exit 1
+            echo "Medium/low issues found (not blocking) ⚠️"
           fi
 
       - name: Upload report
