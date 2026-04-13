@@ -30,16 +30,30 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           path: target-repo
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
       - name: Run SAST
         run: |
           python cli.py target-repo --json report.json
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
       - name: Fail if vulnerabilities found
         run: |
-          if grep -q '"issues_detected": 0' report.json; then
-            echo "No issues"
+          echo "Analyzing report..."
+
+          count=$(jq '.issues_detected' report.json)
+
+          echo "Issues detected: $count"
+
+          if [ "$count" -eq 0 ]; then
+            echo "Clean repo ✅"
           else
-            echo "Vulnerabilities found!"
+            echo "Vulnerabilities found ❌"
             exit 1
           fi
 
