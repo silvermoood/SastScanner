@@ -1,0 +1,50 @@
+name: Scan External Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: "Repository to scan (owner/repo)"
+        required: true
+      branch:
+        description: "Branch"
+        default: "main"
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout scanner
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.branch }}
+          path: target-repo
+
+      - name: Run SAST
+        run: |
+          python cli.py target-repo --json report.json
+
+      - name: Fail if vulnerabilities found
+        run: |
+          if grep -q '"issues_detected": 0' report.json; then
+            echo "No issues"
+          else
+            echo "Vulnerabilities found!"
+            exit 1
+          fi
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: sast-report
+          path: report.json
