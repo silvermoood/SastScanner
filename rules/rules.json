@@ -1,1 +1,750 @@
-
+[
+  {
+    "id": "CRYPTO001",
+    "weakness": "CWE-327",
+    "patterns": ["hashlib.md5", "hashlib.sha1"],
+    "libraries": ["hashlib"],
+    "severity_policy": {
+      "base": "HIGH",
+      "tainted_input": "CRITICAL"
+    },
+    "explanation_template": "Обнаружено использование устаревшей хеш-функции (MD5/SHA-1), непригодной для криптографических целей."
+  },
+  {
+    "id": "CRYPTO002",
+    "weakness": "CWE-327",
+    "patterns": ["Crypto.Cipher.DES", "DES.new"],
+    "libraries": ["pycrypto", "pycryptodome", "Crypto"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Используется DES — устаревший и небезопасный алгоритм шифрования."
+  },
+  {
+    "id": "CRYPTO003",
+    "weakness": "CWE-327",
+    "patterns": ["Crypto.Cipher.ARC4", "ARC4.new"],
+    "libraries": ["pycrypto", "pycryptodome", "Crypto"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Используется RC4/ARC4 — ненадёжный потоковый шифр."
+  },
+  {
+    "id": "CRYPTO004",
+    "weakness": "CWE-326",
+    "patterns": ["RSA.generate(512", "RSA.generate(768", "RSA.generate(1024"],
+    "libraries": ["Crypto.PublicKey.RSA", "Crypto"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Генерация RSA-ключа недостаточной длины (<=1024 бит), что снижает криптографическую стойкость."
+  },
+  {
+    "id": "CRYPTO005",
+    "weakness": "CWE-326",
+    "patterns": ["AES.new(.*, AES.MODE_ECB)", "MODE_ECB"],
+    "libraries": ["Crypto.Cipher.AES", "cryptography.hazmat.primitives.ciphers"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Используется режим ECB для блочного шифрования — небезопасный режим, выявляет паттерны в данных."
+  },
+  {
+    "id": "CRYPTO006",
+    "weakness": "CWE-321",
+    "patterns": ["key = \"", "secret = \"", "password = \"", "api_key = \""],
+    "severity_policy": {
+      "base": "HIGH",
+      "tainted_input": "CRITICAL"
+    },
+    "explanation_template": "Хардкод ключа/секрета/пароля в исходном коде — повышает вероятность утечки секретов."
+  },
+  {
+    "id": "CRYPTO007",
+    "weakness": "CWE-330",
+    "patterns": ["random.random", "random.randint", "random.choice"],
+    "libraries": ["random"],
+    "severity_policy": {
+      "base": "MEDIUM",
+      "tainted_input": "HIGH"
+    },
+    "explanation_template": "Используется непредназначенный для криптографии генератор случайных чисел (module random) для задач безопасности."
+  },
+  {
+    "id": "CRYPTO008",
+    "weakness": "CWE-330",
+    "patterns": ["random.seed("],
+    "libraries": ["random"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Присутствует явная инициализация seed у random — возможна предсказуемость генератора."
+  },
+  {
+    "id": "CRYPTO009",
+    "weakness": "CWE-330",
+    "patterns": ["os.urandom(", "secrets.token_bytes", "secrets.token_hex", "secrets.token_urlsafe"],
+    "libraries": ["os", "secrets"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Рекомендуется использовать cryptographically secure генераторы (secrets/os.urandom) — правило отмечает их наличие (информативно)."
+  },
+  {
+    "id": "CRYPTO010",
+    "weakness": "CWE-327",
+    "patterns": ["cryptography.hazmat.primitives.hashes.MD5", "cryptography.hazmat.primitives.hashes.SHA1"],
+    "libraries": ["cryptography"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Использование устаревших хеш-алгоритмов через библиотеку cryptography."
+  },
+  {
+    "id": "CRYPTO011",
+    "weakness": "CWE-326",
+    "patterns": ["cryptography.hazmat.primitives.ciphers.algorithms.TripleDES", "DES3"],
+    "libraries": ["cryptography", "pycryptodome"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "TripleDES/3DES считается слабым и устаревшим для современных приложений."
+  },
+  {
+    "id": "CRYPTO012",
+    "weakness": "CWE-326",
+    "patterns": ["AES.new(", "Cipher(algorithms.AES", "modes.ECB", "modes.CBC"],
+    "libraries": ["pycryptodome", "cryptography"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Проверить корректность использования режимов AES (избегать ECB; CBC требует корректной работы с IV и padding)."
+  },
+  {
+    "id": "CRYPTO013",
+    "weakness": "CWE-321",
+    "patterns": ["private_key = \"", "pem = \"-----BEGIN PRIVATE KEY-----"],
+    "severity_policy": {
+      "base": "CRITICAL"
+    },
+    "explanation_template": "Приватный ключ в коде/строке — критический риск компрометации."
+  },
+  {
+    "id": "CRYPTO014",
+    "weakness": "CWE-312",
+    "patterns": ["open(", ".write(", "wb", "w+"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Данные могут сохраняться в открытом виде на диске — проверьте, не записываются ли секреты в plaintext."
+  },
+  {
+    "id": "CRYPTO015",
+    "weakness": "CWE-311",
+    "patterns": ["http://", "requests.get('http://", "urllib.request.urlopen('http://"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Передача данных по небезопасному HTTP; чувствительная информация может передаваться в открытом виде."
+  },
+  {
+    "id": "CRYPTO016",
+    "weakness": "CWE-295",
+    "patterns": ["verify=False", "ssl._create_unverified_context", "context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)"],
+    "libraries": ["requests", "ssl", "urllib"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Отключение проверки TLS/SSL или использование небезопасных опций — приводит к MITM-уязвимости."
+  },
+  {
+    "id": "CRYPTO017",
+    "weakness": "CWE-330",
+    "patterns": ["random.seed(0)", "random.seed(1)", "random.seed(\""],
+    "libraries": ["random"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Фиксированный/предсказуемый seed у генератора случайных чисел — не подходит для криптографии."
+  },
+  {
+    "id": "CRYPTO018",
+    "weakness": "CWE-321",
+    "patterns": ["ENV['SECRET']", "os.environ.get('SECRET')", "os.getenv('SECRET')"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Доступ к секретам через переменные окружения — проверьте, не логируются ли и не сохраняются ли они в коде/файлах."
+  },
+  {
+    "id": "CRYPTO019",
+    "weakness": "CWE-330",
+    "patterns": ["random.getrandbits(", "random.SystemRandom("],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Использование getrandbits/SystemRandom — проверьте, подходит ли это для задачи; предпочтительнее secrets для токенов."
+  },
+  {
+    "id": "CRYPTO020",
+    "weakness": "CWE-326",
+    "patterns": ["PBKDF2(", "pbkdf2_hmac(", "iterations="],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Параметры PBKDF2 (iterations/length) следует проверять — малое число итераций снижает стойкость паролей."
+  },
+  {
+    "id": "CRYPTO021",
+    "weakness": "CWE-321",
+    "patterns": ["salt = \"", "SALT = \""],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Хардкод salt в коде может уменьшить эффективность защиты хешей — рекомендуется использовать случайные соль-значения."
+  },
+  {
+    "id": "CRYPTO022",
+    "weakness": "CWE-327",
+    "patterns": ["hmac.new(.*, hashlib.md5", "HMAC(md5"],
+    "libraries": ["hmac", "hashlib", "cryptography.hazmat.primitives.hmac"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Использование HMAC с устаревшим хеш-алгоритмом (MD5/SHA1) — риск ослабления целостности."
+  },
+  {
+    "id": "CRYPTO023",
+    "weakness": "CWE-327",
+    "patterns": ["hashlib.sha1(", "hmac.SHA1"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Использование SHA-1 в криптографических целях — считается устаревшим и небезопасным."
+  },
+  {
+    "id": "CRYPTO024",
+    "weakness": "CWE-326",
+    "patterns": ["DES3.new(", "DES3.MODE_ECB"],
+    "libraries": ["Crypto.Cipher.DES3", "pycryptodome"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Используется 3DES в потенциально небезопасном режиме (например, ECB) — избегать в новых разработках."
+  },
+  {
+    "id": "CRYPTO025",
+    "weakness": "CWE-321",
+    "patterns": ["open('id_rsa'", "open('private_key'", "load_pem_private_key("],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Чтение приватного ключа из файлом/строки в коде требует проверки прав доступа и управления секретами."
+  },
+  {
+    "id": "CRYPTO026",
+    "weakness": "CWE-330",
+    "patterns": ["secrets.choice(", "secrets.token_bytes(", "secrets.token_hex("],
+    "libraries": ["secrets"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Использование модуля secrets — рекомендуется для криптографически стойких токенов (информативное правило)."
+  },
+  {
+    "id": "TLS001",
+    "weakness": "CWE-295",
+    "patterns": ["ssl.PROTOCOL_SSLv23", "ssl.PROTOCOL_TLSv1", "ssl.PROTOCOL_TLSv1_1"],
+    "libraries": ["ssl"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Использование устаревших/небезопасных версий протоколов TLS/SSL."
+  },
+  {
+    "id": "TLS002",
+    "weakness": "CWE-295",
+    "patterns": ["requests.packages.urllib3.disable_warnings", "urllib3.disable_warnings"],
+    "libraries": ["requests", "urllib3"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Отключение предупреждений о проверке сертификатов может скрыть реальные проблемы с TLS."
+  },
+  {
+    "id": "CMD001",
+    "weakness": "CWE-78",
+    "patterns": ["os.system(", "subprocess.call(", "subprocess.Popen(", "shell=True"],
+    "severity_policy": {
+      "base": "HIGH",
+      "tainted_input": "CRITICAL"
+    },
+    "explanation_template": "Возможность выполнения команд ОС; использование shell=True или передачи пользовательских данных в вызов команды — риск инъекции."
+  },
+  {
+    "id": "CODE001",
+    "weakness": "CWE-94",
+    "patterns": ["eval(", "exec(", "execfile("],
+    "severity_policy": {
+      "base": "CRITICAL",
+      "tainted_input": "CRITICAL"
+    },
+    "explanation_template": "Динамическое исполнение кода обнаружено (eval/exec) — высокая вероятность RCE при неконтролируемом вводе."
+  },
+  {
+    "id": "CODE002",
+    "weakness": "CWE-95",
+    "patterns": ["compile(", "ast.parse("],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Динамическая компиляция/парсинг строк в код — требуются проверки источника данных."
+  },
+  {
+    "id": "DESERIAL001",
+    "weakness": "CWE-502",
+    "patterns": ["pickle.load", "pickle.loads", "cPickle.loads", "cPickle.load"],
+    "libraries": ["pickle", "cPickle"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Опасная десериализация через pickle — может привести к выполнению произвольного кода."
+  },
+  {
+    "id": "DESERIAL002",
+    "weakness": "CWE-502",
+    "patterns": ["yaml.load(", "yaml.full_load("],
+    "libraries": ["yaml", "PyYAML"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "yaml.load без безопасного Loader'а может выполнять произвольные объекты — использовать safe_load."
+  },
+  {
+    "id": "DESERIAL003",
+    "weakness": "CWE-502",
+    "patterns": ["marshal.loads", "shelve.open("],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Использование небезопасных модулей десериализации (marshal/shelve) требует проверки контекста источника данных."
+  },
+  {
+    "id": "SQL001",
+    "weakness": "CWE-89",
+    "patterns": [".execute(\"", ".execute('", "cursor.execute(f\"", "cursor.execute(\"%"],
+    "severity_policy": {
+      "base": "HIGH",
+      "tainted_input": "CRITICAL"
+    },
+    "explanation_template": "Вызов SQL через строковую конкатенацию/форматирование — риск SQL-инъекции. Рекомендуется использовать параметризованные запросы."
+  },
+  {
+    "id": "SQL002",
+    "weakness": "CWE-89",
+    "patterns": ["format(", "f\"SELECT", "%("],
+    "severity_policy": {
+      "base": "HIGH",
+      "tainted_input": "CRITICAL"
+    },
+    "explanation_template": "Формирование SQL-запросов через форматирование строк уязвимо к инъекциям при наличии внешних данных."
+  },
+  {
+    "id": "PATH001",
+    "weakness": "CWE-22",
+    "patterns": ["open(user_input", "open(path_from_user", "os.path.join(user_input", "Path(user_input)"],
+    "severity_policy": {
+      "base": "MEDIUM",
+      "tainted_input": "HIGH"
+    },
+    "explanation_template": "Путь к файлу формируется на основе пользовательских данных — возможен Path Traversal."
+  },
+  {
+    "id": "FILE001",
+    "weakness": "CWE-732",
+    "patterns": ["open(", ".chmod(", "os.chmod(", "w+", "wb"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Запись файлов/изменение прав без контроля может привести к ненадёжному хранению секретов или повышению прав доступа."
+  },
+  {
+    "id": "LOG001",
+    "weakness": "CWE-532",
+    "patterns": ["logging.info(", "logging.debug(", "logger.debug(", "logger.info("],
+    "severity_policy": {
+      "base": "LOW",
+      "tainted_input": "HIGH"
+    },
+    "explanation_template": "Возможная запись чувствительной информации в логи — проверьте, не логируются ли пароли/токены/ключи."
+  },
+  {
+    "id": "AUTH001",
+    "weakness": "CWE-311",
+    "patterns": ["set_cookie(", "response.set_cookie(", "cookie.set("],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Установка cookie без флагов Secure/HttpOnly/SameSite может привести к утечке сессионных данных."
+  },
+  {
+    "id": "SESSION001",
+    "weakness": "CWE-200",
+    "patterns": ["session['password'", "request.POST.get('password'"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Обработка секретов в сессиях/запросах требует защиты и осторожного логирования."
+  },
+  {
+    "id": "AUTH002",
+    "weakness": "CWE-620",
+    "patterns": ["compare_digest(", "hmac.compare_digest("],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Использование безопасного сравнения строк (compare_digest) — позитивная практика (информативно)."
+  },
+  {
+    "id": "INJECTION001",
+    "weakness": "CWE-77",
+    "patterns": ["format(", ".format(", "f\"", "%("],
+    "severity_policy": {
+      "base": "MEDIUM",
+      "tainted_input": "HIGH"
+    },
+    "explanation_template": "Шаблонное/строковое форматирование может приводить к инъекциям в различных контекстах (SQL, shell, HTML)."
+  },
+  {
+    "id": "DESIGN001",
+    "weakness": "CWE-927",
+    "patterns": ["hardcoded_password", "default_password", "password='admin'"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Наличие стандартных/хардкод паролей — серьёзная уязвимость."
+  },
+  {
+    "id": "CRYPTO026",
+    "weakness": "CWE-321",
+    "patterns": ["from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC", "PBKDF2HMAC("],
+    "libraries": ["cryptography"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Использование PBKDF2 через cryptography — проверить параметры (iterations, salt length)."
+  },
+  {
+    "id": "CRYPTO027",
+    "weakness": "CWE-321",
+    "patterns": ["cryptography.hazmat.primitives.ciphers.modes.CTR", "modes.CTR("],
+    "libraries": ["cryptography"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Режим CTR требует уникального IV/nonce для каждого шифрования; повторение nonce приводит к компрометации."
+  },
+  {
+    "id": "CRYPTO028",
+    "weakness": "CWE-338",
+    "patterns": ["AES.new(..., iv=", "iv = \"", "IV = \""],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Использование фиксированного/хардкод IV для шифрования — может привести к повторяемости шифртекста."
+  },
+  {
+    "id": "DESERIAL004",
+    "weakness": "CWE-502",
+    "patterns": ["xml.etree.ElementTree.parse", "defusedxml", "lxml.objectify"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "XML-парсинг требует защиты от XXE — использовать безопасные парсеры/настройки."
+  },
+  {
+    "id": "CRYPTO029",
+    "weakness": "CWE-327",
+    "patterns": ["cryptography.hazmat.primitives.asymmetric.rsa.generate_private_key(", "generate_private_key("],
+    "libraries": ["cryptography"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Генерация ключей RSA: проверьте используемый размер ключа (рекомендуется >=2048 бит)."
+  },
+  {
+    "id": "CRYPTO030",
+    "weakness": "CWE-327",
+    "patterns": ["cryptography.hazmat.primitives.asymmetric.ec.generate_private_key(", "ec.generate_private_key("],
+    "libraries": ["cryptography"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Генерация EC-ключей: проверьте выбранную кривую на соответствие современным рекомендациям."
+  },
+  {
+    "id": "MISC001",
+    "weakness": "CWE-798",
+    "patterns": ["DEFAULT_PASSWORD", "DEFAULT_KEY", "admin:admin", "root:root"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Наличие стандартных учётных данных в репозитории — риск несанкционированного доступа."
+  },
+  {
+    "id": "CONFIG001",
+    "weakness": "CWE-15",
+    "patterns": ["DEBUG = True", "app.debug = True", "FLASK_DEBUG = True"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Режим отладки включён на production-окружении — утечка информации и удалённое выполнение кода возможны."
+  },
+  {
+    "id": "WEB001",
+    "weakness": "CWE-601",
+    "patterns": ["redirect(", "flask.redirect(", "HttpResponseRedirect("],
+    "severity_policy": {
+      "base": "MEDIUM",
+      "tainted_input": "HIGH"
+    },
+    "explanation_template": "Использование динамических значений в редиректах без проверки может привести к Open Redirect."
+  },
+  {
+    "id": "CRYPTO031",
+    "weakness": "CWE-330",
+    "patterns": ["random.Random(", "random.seed(time.time()"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Инициализация генератора псевдослучайных чисел системным временем — предсказуемо."
+  },
+  {
+    "id": "CRYPTO032",
+    "weakness": "CWE-327",
+    "patterns": ["pycrypto.Cipher.AES", "Crypto.Cipher.AES.MODE_CBC", "padding.PKCS7"],
+    "libraries": ["pycrypto", "pycryptodome"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Использование AES-CBC требует корректного управления IV и padding; неверная обработка приводит к уязвимостям."
+  },
+  {
+    "id": "CRYPTO033",
+    "weakness": "CWE-321",
+    "patterns": ["credentials = {", "\"password\":", "\"secret\":", "\"token\":"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Обнаружена структура/словарь с очевидными секретами — проверить хранение и доступность этих объектов."
+  },
+  {
+    "id": "CRYPTO034",
+    "weakness": "CWE-330",
+    "patterns": ["np.random.", "numpy.random."],
+    "libraries": ["numpy"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Генерация случайных чисел через numpy не предназначена для криптографии."
+  },
+  {
+    "id": "CRYPTO035",
+    "weakness": "CWE-327",
+    "patterns": ["openssl", "subprocess.run(['openssl'", "Popen(['openssl'"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Вызовы внешней утилиты openssl требуют проверки параметров и обработки вывода; потенциальные риски CLI-инъекций."
+  },
+  {
+    "id": "DESERIAL005",
+    "weakness": "CWE-502",
+    "patterns": ["json.loads(", "pickle.loads(", "bson.loads("],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Десериализация JSON/BSON требует проверки источника; для pickle — высокий риск."
+  },
+  {
+    "id": "CRYPTO036",
+    "weakness": "CWE-326",
+    "patterns": ["RSA.importKey(", "RSA._encrypt(", "encrypt(plaintext, pubkey)"],
+    "libraries": ["pycrypto", "pycryptodome"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Проверить корректное использование публичного/приватного ключа и длину ключей при шифровании."
+  },
+  {
+    "id": "ACCESS001",
+    "weakness": "CWE-276",
+    "patterns": ["os.chmod(", "0777", "0o777"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Широкие права на файлы (0777) могут привести к несанкционированному доступу и утечке секретов."
+  },
+  {
+    "id": "CRYPTO037",
+    "weakness": "CWE-327",
+    "patterns": ["openssl_random_pseudo_bytes", "Crypto.Random.new().read("],
+    "libraries": ["Crypto.Random", "OpenSSL"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Использование генераторов случайных данных из внешних библиотек — проверить стойкость и источник энтропии."
+  },
+  {
+    "id": "SECURE_COMPARE",
+    "weakness": "CWE-330",
+    "patterns": ["==", "!="],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Прямое сравнение секретов (==) может быть уязвимо к тайминг-атакам; рекомендуется использовать hmac.compare_digest."
+  },
+  {
+    "id": "CRYPTO038",
+    "weakness": "CWE-327",
+    "patterns": ["bcrypt.hashpw(", "bcrypt.gensalt("],
+    "libraries": ["bcrypt"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Использование bcrypt — хорошая практика для хеширования паролей (информативно)."
+  },
+  {
+    "id": "CRYPTO039",
+    "weakness": "CWE-320",
+    "patterns": ["encryption_key = base64.b64decode(", "b64decode("],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Ключи/секреты, декодируемые из base64 в коде, требуют проверки источника и управления секретами."
+  },
+  {
+    "id": "PRIVILEGE001",
+    "weakness": "CWE-250",
+    "patterns": ["os.setuid(", "os.setgid(", "subprocess.run('sudo'"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Изменение привилегий или вызов sudo из приложения требует особой осторожности."
+  },
+  {
+    "id": "CRYPTO040",
+    "weakness": "CWE-326",
+    "patterns": ["PKCS1_v1_5.new(", "encrypt(, PKCS1_v1_5)"],
+    "libraries": ["Crypto.Signature", "Crypto.Cipher"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Использование старых схем (PKCS#1 v1.5) для подписи/шифрования может быть небезопасно в некоторых сценариях."
+  },
+  {
+    "id": "CRYPTO041",
+    "weakness": "CWE-327",
+    "patterns": ["hashlib.new('md4'", "MD4"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Использование устаревших/слабых хешей (MD4 и т.д.) — небезопасно для криптографических целей."
+  },
+  {
+    "id": "CRYPTO042",
+    "weakness": "CWE-321",
+    "patterns": ["credentials.json", "secrets.json", "secrets.yaml"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "В репозитории/проекте найдены файлы, типично содержащие секреты — проверить на наличие реальных паролей/ключей."
+  },
+  {
+    "id": "CRYPTO043",
+    "weakness": "CWE-330",
+    "patterns": ["uuid.uuid4(", "uuid.uuid1("],
+    "libraries": ["uuid"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "uuid.uuid1 включает MAC/временную метку — не использовать для секретов; uuid4 лучше, но для токенов предпочтительнее secrets."
+  },
+  {
+    "id": "CRYPTO044",
+    "weakness": "CWE-327",
+    "patterns": ["hashlib.new('sha1'", "hashlib.sha1("],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "SHA-1 используется — не рекомендовано для новых систем; заменить на SHA-256+."
+  },
+  {
+    "id": "CRYPTO045",
+    "weakness": "CWE-326",
+    "patterns": ["XOR cipher", "simple_xor(", "byte ^ key"],
+    "severity_policy": {
+      "base": "HIGH"
+    },
+    "explanation_template": "Простые/домашние шифры (XOR и т.п.) не обеспечивают адекватную криптографическую защиту."
+  },
+  {
+    "id": "CRYPTO046",
+    "weakness": "CWE-327",
+    "patterns": ["openssl rand -hex", "subprocess.run(['openssl', 'rand'"],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Генерация случайных данных через calls к openssl — требует проверки обработки ввода/вывода и безопасности вызова."
+  },
+  {
+    "id": "CRYPTO047",
+    "weakness": "CWE-327",
+    "patterns": ["hkdf.HKDF(", "HKDF("],
+    "libraries": ["cryptography"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "HKDF используется для развёртки ключей — информационное правило (проверьте параметры)."
+  },
+  {
+    "id": "CRYPTO048",
+    "weakness": "CWE-327",
+    "patterns": ["scrypt(", "hashlib.scrypt("],
+    "libraries": ["hashlib"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Использование scrypt для хеширования паролей — хорошая практика (информативно)."
+  },
+  {
+    "id": "MALFORMED001",
+    "weakness": "CWE-78",
+    "patterns": ["format(user_input)", "f\"{user_input}\"", "% user_input"],
+    "severity_policy": {
+      "base": "MEDIUM",
+      "tainted_input": "HIGH"
+    },
+    "explanation_template": "Подстановка внешних данных в команды/запросы без валидации — риск инъекций в разных контекстах."
+  },
+  {
+    "id": "CRYPTO049",
+    "weakness": "CWE-327",
+    "patterns": ["cryptography.hazmat.primitives.kdf.scrypt.Scrypt(", "Scrypt("],
+    "libraries": ["cryptography"],
+    "severity_policy": {
+      "base": "LOW"
+    },
+    "explanation_template": "Использование scrypt через cryptography — проверьте параметры (n, r, p) для адекватной защиты."
+  },
+  {
+    "id": "CRYPTO050",
+    "weakness": "CWE-321",
+    "patterns": ["credentials = os.path.join(', 'secrets'", "open('secrets", "read_secret("],
+    "severity_policy": {
+      "base": "MEDIUM"
+    },
+    "explanation_template": "Чтение секретов из файлов в коде требует контроля прав и безопасного хранения (например, secrets manager)."
+  }
+]
