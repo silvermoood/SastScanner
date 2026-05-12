@@ -17,3 +17,29 @@ The primary goal of this project is to assist developers in detecting weaknesses
 * Extensible architecture for adding new rules and checks
 
 ---
+
+## 1. Architecture Overview
+
+Source Code
+    ↓
+AST Parser
+    ↓
+Pattern Analyzer
+    ↓
+Context Analyzer
+    ↓
+DataFlow Analyzer
+    ↓
+Severity Engine
+    ↓
+Findings Report
+
+## 2. Detection Pipeline
+
+1. Python source code is parsed into AST
+2. Function calls and patterns are extracted
+3. Security rules are matched
+4. Context analysis reduces false positives
+5. Dataflow analysis tracks tainted input
+6. Severity engine calculates risk level
+7. Findings are generated
