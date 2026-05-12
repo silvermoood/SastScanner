@@ -20,19 +20,7 @@ The primary goal of this project is to assist developers in detecting weaknesses
 
 ## 1. Architecture Overview
 
-Source Code
-    ↓
-AST Parser
-    ↓
-Pattern Analyzer
-    ↓
-Context Analyzer
-    ↓
-DataFlow Analyzer
-    ↓
-Severity Engine
-    ↓
-Findings Report
+Source Code -> AST Parser -> Pattern Analyzer -> Context Analyzer -> DataFlow Analyzer -> Severity Engine -> Findings Report
 
 ## 2. Detection Pipeline
 
